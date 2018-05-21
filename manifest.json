@@ -1,0 +1,22 @@
+{
+    "name": "Note It",
+    "version": "1.0",
+    "description": "Be able to highlight items on a page and add notes.",
+    "manifest_version": 2,
+    "background": {
+        "scripts": ["client/background.js"],
+        "persistent": false
+    },
+    "browser_action": {
+        "default_popup": "client/popup.html"
+    },
+    "icons": {
+        "16": "client/assets/highlightIcon.png",
+        "48": "client/assets/highlightIcon.png",
+        "128": "client/assets/highlightIcon.png"
+    },
+    "permissions":[
+        "storage",
+        "<all_urls>"
+    ]
+}
