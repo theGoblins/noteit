@@ -19,3 +19,9 @@ document.body.onload = function() {
     });
     window.close();
   }
+
+
+  // "content_security_policy": "script-src 'self' 'unsafe-eval' https://apis.googleapis.com https://ajax.googleapis.com; object-src 'self' 'unsafe-eval' https://apis.googleapis.com https://ajax.googleapis.com",
+
+
+  // "content_security_policy": "script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'self'",

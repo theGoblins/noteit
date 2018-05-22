@@ -15,8 +15,19 @@
         "48": "client/assets/highlightIcon.png",
         "128": "client/assets/highlightIcon.png"
     },
+
+    
+
     "permissions":[
         "storage",
-        "<all_urls>"
-    ]
+        "<all_urls>",
+        "identity"
+    ],
+
+    "oauth2": {
+        "client_id": "616174675838-lhonhh213amr4hl1brlcq6ooa03h35lu.apps.googleusercontent.com",
+        "scopes": [
+            "https://www.googleapis.com/auth/plus.me"
+        ]
+    }
 }
