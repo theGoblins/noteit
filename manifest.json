@@ -5,8 +5,12 @@
     "description": "Be able to highlight items on a page and add notes.",
     "manifest_version": 2,
     "background": {
-        "scripts": ["client/background.js"],
-        "persistent": true
+
+        "scripts": [
+            "client/background.js"
+        ],
+        "persistent": false
+
     },
     "browser_action": {
         "default_popup": "client/popup.html"
@@ -21,6 +25,8 @@
         "storage",
         "<all_urls>",
         "identity",
+        "contextMenus",
+        "activeTab",
         "webNavigation",
         "tabs"
     ],
