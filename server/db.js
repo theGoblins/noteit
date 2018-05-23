@@ -8,6 +8,7 @@ const credentials = {
   database: 'aupadlon'
 };
 
+// postgres://aupadlon:R9jDOCvYOaWQN_KEVFDez3UOVzV2tRIb@elmer.db.elephantsql.com:5432/aupadlon
 const client = new pg.Client(credentials);
 
 module.exports = client;
