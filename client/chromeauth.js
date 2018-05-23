@@ -13,7 +13,6 @@ const userInfoBox = document.getElementById('user-display');
     fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + auth_token)
       .then(resp => resp.json())
       .then(resp => {
-        console.log('Identity response: ', resp)
         googleID = resp.id;
         firstName = resp.given_name;
         email = resp.email;

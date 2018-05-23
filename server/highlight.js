@@ -2,7 +2,6 @@
 if(!window.Highlight){
     Highlight = {};
   }
-  console.log('hi');
   Highlight.Selector = {};
   Highlight.Selector.getSelected = function(){
     var t = '';
@@ -20,7 +19,6 @@ if(!window.Highlight){
 //     var st = Highlight.Selector.getSelected();
 //     if(st!=''){
 //       alert("You selected:\n"+st);
-//       console.log(st);
 //     }
 //   }
 
@@ -30,7 +28,6 @@ if(!window.Highlight){
       if (selected!=''){
          let stack = [];
          while (selected.parentNode != null){
-             console.log (selected.nodeName);
              let sibCount = 0;
              let sibIndex = 0;
              for (let i = 0; i < selected.parentNode.childNodes.length; i++){
@@ -62,7 +59,6 @@ if(!window.Highlight){
           function getDomPath(el) {
             var stack = [];
             while ( el.parentNode != null ) {
-              console.log(el.nodeName);
               var sibCount = 0;
               var sibIndex = 0;
               for ( var i = 0; i < el.parentNode.childNodes.length; i++ ) {
@@ -83,11 +79,9 @@ if(!window.Highlight){
               }
               el = el.parentNode;
             }
-             console.log(stack);
              stack.splice(-1, 1);
 
              const filteredArray = stack.filter(element => element[0] !== '#');
-             console.log(filteredArray);
             chrome.runtime.sendMessage({ type: 'highlighted-text-path', data: filteredArray });
              return filteredArray; 
            }
@@ -113,9 +107,7 @@ if(!window.Highlight){
         }
 
 
-        console.log(finalObj);
-
-
+        console.log(`finalObj: ${JSON.stringify(finalObj)}`);
 
         return finalObj;
     }

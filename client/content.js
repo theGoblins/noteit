@@ -1,5 +1,4 @@
 chrome.runtime.onMessage.addListener((msg) => {
-  console.log('message received!');
   // If the received message has the expected format...
   if (msg.type === 'notes_to_highlight') {
       // Call the specified callback, passing
@@ -10,7 +9,7 @@ chrome.runtime.onMessage.addListener((msg) => {
 
 function highlightNotes(DBobjs) {
   let elementString = DBobjs.join(' ');
-  console.log('elementstring ' + elementString);
+  console.log('DOM path: ' + DBobjs.join(' > '));
   let start = 3, length = 140;
   // once the selector arrays are properly constructed, use this: 
   // elements.forEach((e, i) => {
