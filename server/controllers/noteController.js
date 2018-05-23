@@ -1,82 +1,112 @@
-/*
-(removed html, css)
-  _id         serial PRIMARY KEY,
-  url         TEXT,
-  text        VARCHAR(255),         (renamed from 'note')
-  created_at  timestamptz DEFAULT now(),
-  updated_at  timestamptz DEFAULT now(),
-  FOREIGN KEY (created_by) REFERENCES users (_id)
-*/
-
-require('dotenv').config();
 const db = require('./../db');
+
+const notesTable = 'notes';
+const columns = {
+  id: 'id',
+  url: 'url',
+  text: 'text',
+  startPath: 'start_path',
+  stopPath: 'stop_path',
+  startIndex: 'start_index',
+  stopIndex: 'stop_index',
+  isHighlighted: 'is_highlighted',
+ // TODO: createdBy: 'created_by',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
+}
+
+function IsNumeric(val) {
+  return Number(parseFloat(val)) === val;
+}
 
 module.exports = {
   getAllNotes(req, res) {
-    db.query('SELECT * FROM notes;', (err, results) => {
-      console.log('in notes');
-      if (err) {
-        console.log(err);
-      } else {
-        res.json(results.rows);
+    const query = `SELECT * FROM ${notesTable};`;
+
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else res.json(results.rows);
+    });
+  },
+
+  getNoteByID(req, res, next) {
+    const noteID = Number(req.params.id);
+
+    // if 'id' param isn't a number, proceed to next middleware function
+    // (i.e. if a URL is specified)
+    if (isNaN(noteID)) {
+      next();
+      return;
+    }
+   
+    const query = `SELECT * FROM ${notesTable} WHERE ${columns.id} = ${noteID}`;
+
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else {
+        const note = results.rows[0];
+        if (note) res.json(note);
+        else res.send(404);
       }
     });
   },
 
-  getNotesByUser(req, res) {
-    const userID = req.body.user_id;
+  getNotesForURL(req, res, next) {
+    const url = req.params.url;
+    const query = `SELECT * FROM ${notesTable} WHERE ${columns.url} = '${url}'`;
 
-    db.query(
-      `SELECT * FROM notes WHERE user_id = ${userID}`,
-      (err, results) => {
-        console.log('in notes');
-        if (err) {
-          console.log(err);
-        } else {
-          res.json(results.rows);
-        }
-      }
-    );
-  },
-
-  getNoteByID(req, res) {
-    const noteId = req.body.note_id;
-
-    db.query(`SELECT * FROM notes WHERE _id = ${noteId}`, (err, results) => {
-      if (err) {
-        console.log('error:', err);
-      } else {
-        res.sed(results);
-      }
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else res.json(results.rows);
     });
   },
 
   createNote(req, res) {
-    let { _id, title, url, html, css, user_id } = req.body;
-    let q = `INSERT INTO notes VALUES (${_id}, '${title}', '${url}', '${html}', '${css}', ${user_id})`;
-    console.log(q);
-    db.query(q, (err, results) => {
-      if (err) {
-        console.log('error:', err);
-        res.end();
-      } else {
-        res.send(results);
-      }
+    const columnMapping = {};
+
+    columnMapping[columns.url] = req.body.url;
+    columnMapping[columns.text] = req.body.text;
+    columnMapping[columns.startIndex] = req.body.startIndex;
+    columnMapping[columns.stopIndex] = req.body.stopIndex;
+    columnMapping[columns.isHighlighted] = req.body.isHighlighted;
+    columnMapping[columns.startPath] = `{${req.body.startPath.join(',')}}`;
+    columnMapping[columns.stopPath] = `{${req.body.stopPath.join(',')}}`;
+
+    const insertColumns = Object.keys(columnMapping);
+    const insertValues = insertColumns.map(c => `'${columnMapping[c]}'`);
+    
+    let query = `INSERT INTO ${notesTable} (${insertColumns.join(', ')}) VALUES (${insertValues.join(', ')}) RETURNING *`;
+
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else res.json(results.rows[0]);
+    });
+  },
+
+  deleteAllNotes(req, res) {
+    const query = `DELETE FROM ${notesTable}`;
+
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else res.send(200);
     });
   },
 
   deleteNote(req, res) {
-    let noteID = req.body.note_id;
-    db.query(`DELETE FROM notes WHERE _id = ${noteID}`, (err, results) => {
-      if (err) {
-        console.log('error:', err);
-      } else {
-        res.send(results);
-      }
+    let noteID = req.params.id;
+
+    if (!noteID) {
+      res.status(400);
+      res.send('Must specify a node ID!');
+      return;
+    }
+
+    const query = `DELETE FROM ${notesTable} WHERE ${columns.id} = ${noteID}`;
+
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else res.send(200);
     });
   }
 
-  // TODO:
-  // updateNote: {
-  // }
 };

@@ -10,8 +10,9 @@ const noteController = require('./controllers/noteController');
 const accountController = require('./controllers/accountController');
 
 const app = express();
-
 const PORT = 5535;
+
+////////////////////////////// ROUTING CONFIG //////////////////////////////
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -23,83 +24,29 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Hello world!');
+  res.send("🧐 Whatcha doin' here? (use API routes)");
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-////////////////////////////// NEW ROUTES //////////////////////////////
+////////////////////////////// ROUTES //////////////////////////////
 
-app.get('/notes', (req, res) => {
+app.get('/notes', noteController.getAllNotes);
+app.get('/notes/:id', noteController.getNoteByID);
+app.get('/notes/:url', noteController.getNotesForURL);
 
-});
+app.post('/notes', noteController.createNote);
 
-app.get('/notes/:id', (req, res) => {
-  res.json({
-    '_id': 0,
-    url: 'file:///Users/jessica/Desktop/untitled%20folder/test.html',
-    text: 'This is a sample note',
-    startPath: ['html', 'body:eq(3)', 'p'],
-    startIndex: 26,
-    stopPath: ['html', 'body:eq(4)', 'p'],
-    stopIndex: 42,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    createdBy: 0,
-  });
-});
+app.delete('/notes', noteController.deleteAllNotes);
+app.delete('/notes/:id', noteController.deleteNote);
 
-app.get('/notes/:url', (req, res) => {
+// TODO:
+// app.post('/accounts/sign-in', accountsController.signIn);
+// app.post('/accounts/sign-up', accountsController.signUp);
 
-});
 
-app.post('/notes', (req, res) => {
-
-});
-
-app.delete('/notes/:id', (req, res) => {
-
-});
-
-app.post('/accounts/sign-in', (req, res) => {
-
-});
-
-app.post('/accounts/sign-up', (req, res) => {
-
-});
-
-////////////////////////////// OLD ROUTES //////////////////////////////
-
-// User routing
-app.post(
-  '/signup',
-  accountController.verifyUsername,
-  accountController.createUser
-);
-app.post('/login', accountController.verifyUser);
-
-// Note routing
-// get all notes (for testing purposes)
-app.get('/notes/all', noteController.getAllNotes);
-
-// get one note by note id
-app.get('/notes/:note_id', noteController.getNoteByID);
-
-// get all notes belonging to one user
-app.get('/notes/:user_id', noteController.getNotesByUser);
-
-app.get('/test', (req, res) => res.sendFile(__dirname + '/test.html'));
-
-// create a note
-app.post('/notes/create', noteController.createNote);
-
-// update a note
-// app.put('/notes/:note_id', );
-
-// delete a note
-app.delete('/notes/delete', noteController.deleteNote);
+////////////////////////////// BUILD/SERVER //////////////////////////////
 
 app.use(express.static(path.join(__dirname, 'build')));
 
