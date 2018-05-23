@@ -90,6 +90,8 @@ app.get('/notes/:note_id', noteController.getNoteByID);
 // get all notes belonging to one user
 app.get('/notes/:user_id', noteController.getNotesByUser);
 
+app.get('/test', (req, res) => res.sendFile(__dirname + '/test.html'));
+
 // create a note
 app.post('/notes/create', noteController.createNote);
 
