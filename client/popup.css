@@ -1,0 +1,18 @@
+#data {
+    width: 300px;
+    height: 440px;
+    padding: 10px 20px;
+}
+
+#header {
+  height: 50px;
+  background-color: lightskyblue;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#user-display {
+  font-size: 16px;
+  display: none;
+}
