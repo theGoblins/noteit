@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
 let googleID, firstName, email, token;
 const userInfoBox = document.getElementById('user-display');
 
+// comment below out for testing -------
   chrome.identity.getAuthToken({ interactive: true }, (auth_token) => {
     if (chrome.runtime.lastError) {
       alert(chrome.runtime.lastError.message);
@@ -25,4 +26,6 @@ const userInfoBox = document.getElementById('user-display');
         console.error(err);
       });
   });
+// ------ comment above out for testing
+
 });
