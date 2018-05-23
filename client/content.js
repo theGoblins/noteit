@@ -8,24 +8,17 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
 });
 
-function highlightNotes(data) {
-  // const singleElement = true;
-  // if (data.startPath && data.stopPath) singleElement = false;
-  const regex = /\d+/i
-  const startElement = $('html body p:eq(3)');
-  const originalHtml = startElement.html();
-  // if (singleElement) {
-    const newHtml = originalHtml.slice(0, data.startIndex) + '<span style = "background-color:yellow">' + originalHtml.slice(data.startIndex, data.stopIndex) + '</span>' + originalHtml.slice(data.stopIndex);
-    startElement.html(newHtml);
-  // } else {
-  //   const pathOpener = startPath.join(' ');
-  //   pathOpener.splice(startPath.indexOf('('));
-  //   const newHtml = originalHtml.slice(0, data.startIndex) + '<span style = "background-color:yellow">' + originalHtml.slice(data.startIndex) + '</span>';
-  //   startElement.html(newHtml);
-  //   for (let i = data.startPath[data.startPath.length - 1].slice(data.startPath[data.startPath.length - 1].indexOf('('), data.startPath[data.startPath.length - 1].indexOf(')')) + 1; i <= data.stopPath[data.stopPath.length - 1].slice(data.stopPath[data.stopPath.length - 1].indexOf('('), data.stopPath[data.stopPath.length - 1].indexOf(')')); i++) {
-  //     const element = $(pathOpener + i + ')');
-      
-  //   }
-  // }
+function highlightNotes(DBobjs) {
+  let elementString = DBobjs.join(' ');
+  console.log('elementstring ' + elementString);
+  let start = 3, length = 140;
+  // once the selector arrays are properly constructed, use this: 
+  // elements.forEach((e, i) => {
+  //   startIndex = i === 1?
+  //   element = $('html body p:eq(2)');
+  //   element.markRanges([{start: 5, length: 100000}]);
+  $(elementString).text('HELLLO!!!!!');
   
+  // .markRanges([{start: 0, length: 40}]);
 }
+
