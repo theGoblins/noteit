@@ -6,7 +6,7 @@
     "manifest_version": 2,
     "background": {
         "scripts": ["client/background.js"],
-        "persistent": false
+        "persistent": true
     },
     "browser_action": {
         "default_popup": "client/popup.html"
@@ -17,12 +17,12 @@
         "128": "client/assets/highlightIcon.png"
     },
 
-    
-
     "permissions":[
         "storage",
         "<all_urls>",
-        "identity"
+        "identity",
+        "webNavigation",
+        "tabs"
     ],
 
     "oauth2": {
