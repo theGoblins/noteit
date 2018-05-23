@@ -46,7 +46,11 @@
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.8.2",
+<<<<<<< HEAD
+    "mark.js": "^8.11.1",
+=======
     "nodemon": "^1.17.4",
+>>>>>>> 55f44fcefc8219b91ae674dee1a1c6e729886f3c
     "webpack-cli": "^2.1.3"
   }
 }
