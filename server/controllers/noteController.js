@@ -1,15 +1,19 @@
-/*
-(removed html, css)
-  _id         serial PRIMARY KEY,
-  url         TEXT,
-  text        VARCHAR(255),         (renamed from 'note')
-  created_at  timestamptz DEFAULT now(),
-  updated_at  timestamptz DEFAULT now(),
-  FOREIGN KEY (created_by) REFERENCES users (_id)
-*/
-
-require('dotenv').config();
 const db = require('./../db');
+
+const notesTable = 'notes';
+const columns = {
+  id: 'id',
+  url: 'url',
+  text: 'text',
+  startPath: 'start_path',
+  stopPath: 'stop_path',
+  startIndex: 'start_index',
+  stopIndex: 'stop_index',
+  isHighlighted: 'is_highlighted',
+ // TODO: createdBy: 'created_by',
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
+}
 
 function IsNumeric(val) {
   return Number(parseFloat(val)) === val;
@@ -17,117 +21,92 @@ function IsNumeric(val) {
 
 module.exports = {
   getAllNotes(req, res) {
-    db.query('SELECT * FROM notes;', (err, results) => {
-      console.log('in notes');
-      if (err) {
-        console.log(err);
-      } else {
-        res.json(results.rows);
-      }
+    const query = `SELECT * FROM ${notesTable};`;
+
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else res.json(results.rows);
     });
-  },
-
-  getNotesByUser(req, res) {
-    const userID = req.body.user_id;
-
-    db.query(
-      `SELECT * FROM notes WHERE user_id = ${userID}`,
-      (err, results) => {
-        console.log('in notes');
-        if (err) {
-          console.log(err);
-        } else {
-          res.json(results.rows);
-        }
-      }
-    );
   },
 
   getNoteByID(req, res, next) {
     const noteID = Number(req.params.id);
+
+    // if 'id' param isn't a number, proceed to next middleware function
+    // (i.e. if a URL is specified)
     if (isNaN(noteID)) {
       next();
       return;
     }
    
-    db.query(`SELECT * FROM notes WHERE id = ${noteID}`, (err, results) => {
-      if (err) {
-        res.status(500);
-        res.send('Database error');
-      } else {
+    const query = `SELECT * FROM ${notesTable} WHERE ${columns.id} = ${noteID}`;
+
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else {
         const note = results.rows[0];
         if (note) res.json(note);
-        else {
-          res.send(404);
-        }
+        else res.send(404);
       }
     });
   },
 
   getNotesForURL(req, res, next) {
     const url = req.params.url;
+    const query = `SELECT * FROM ${notesTable} WHERE ${columns.url} = '${url}'`;
 
-    db.query(`SELECT * FROM notes WHERE url = '${url}'`, (err, results) => {
-      if (err) {
-        console.log(`db err: ${err}`);
-        res.status(500);
-        res.send("Database error (did you forget to URL encode the URL you're requesting notes for?");
-      } else {
-        res.json(results.rows);
-      }
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else res.json(results.rows);
     });
   },
 
   createNote(req, res) {
-    const { url, text, startPath, stopPath, startIndex, stopIndex, isHighlighted} = req.body;
+    const columnMapping = {};
 
-    // TODO
+    columnMapping[columns.url] = req.body.url;
+    columnMapping[columns.text] = req.body.text;
+    columnMapping[columns.startIndex] = req.body.startIndex;
+    columnMapping[columns.stopIndex] = req.body.stopIndex;
+    columnMapping[columns.isHighlighted] = req.body.isHighlighted;
+    columnMapping[columns.startPath] = `{${req.body.startPath.join(',')}}`;
+    columnMapping[columns.stopPath] = `{${req.body.stopPath.join(',')}}`;
 
-    console.log(`startPath: ${Array.isArray(startPath)}`);
-    console.log(`stopPath: ${stopPath}`);
+    const insertColumns = Object.keys(columnMapping);
+    const insertValues = insertColumns.map(c => `'${columnMapping[c]}'`);
+    
+    let query = `INSERT INTO ${notesTable} (${insertColumns.join(', ')}) VALUES (${insertValues.join(', ')}) RETURNING *`;
 
-    let q = `INSERT INTO notes (url, text, start_path, stop_path, start_index, stop_index, is_highlighted) VALUES ('${url}', '${text}', '{"html","body:eq(3)","p"}', '{"html","body:eq(4)","p"}', '${startIndex}', '${stopIndex}', '${isHighlighted}') RETURNING *`;
-
-    console.log(q);
-    db.query(q, (err, results) => {
-      if (err) {
-        res.status(500);
-        res.send('Database error');
-      } else {
-        res.send(results.rows[0]);
-      }
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else res.json(results.rows[0]);
     });
   },
 
   deleteAllNotes(req, res) {
-    db.query(`DELETE FROM notes`, (err, results) => {
-      if (err) {
-        res.status(500);
-        res.send('Database error');
-      } else {
-        res.send('Success');
-      }
+    const query = `DELETE FROM ${notesTable}`;
+
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else res.send(200);
     });
   },
 
   deleteNote(req, res) {
     let noteID = req.params.id;
+
     if (!noteID) {
       res.status(400);
       res.send('Must specify a node ID!');
+      return;
     }
 
-    db.query(`DELETE FROM notes WHERE id = ${noteID}`, (err, results) => {
-      if (err) {
-        res.status(500);
-        res.send('Database error');
-      } else {
-        res.send('Success');
-      }
+    const query = `DELETE FROM ${notesTable} WHERE ${columns.id} = ${noteID}`;
+
+    db.query(query, (err, results) => {
+      if (err) res.send(500);
+      else res.send(200);
     });
   }
 
-  // TODO:
-  // updateNote: {
-  // }
 };

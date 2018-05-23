@@ -1,16 +1,6 @@
-require('dotenv').config();
-
 const db = require('./../db');
 const SALT_WORK_FACTOR = 10;
 const bcrypt = require('bcryptjs');
-
-/*
-  _id         serial PRIMARY KEY,
-  email       VARCHAR(255) NOT NULL,
-  password    VARCHAR(255) NOT NULL,
-  created     timestamptz,
-  updated     timestamptz
-*/
 
 module.exports = {
 
