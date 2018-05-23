@@ -15,7 +15,7 @@ const bcrypt = require('bcryptjs');
 module.exports = {
   verifyUsername: (req, res, next) => {
     if (req.body.name && req.body.password) {
-      db.client.query(
+      db.query(
         `SELECT password FROM users WHERE (name = '${req.body.name}');`,
         (err, results) => {
           console.log('checkUser log: ', results.rowCount);
@@ -54,7 +54,7 @@ module.exports = {
         let q = `INSERT INTO users(name, password) VALUES ('${name}', '${password}');`;
         console.log('Our query is read: ', q);
 
-        db.client.query(q, (err, results) => {
+        db.query(q, (err, results) => {
           console.log('query');
           if (err) console.log(err);
           else return res.send(true);
@@ -66,7 +66,7 @@ module.exports = {
   },
 
   checkUser: (req, res) => {
-    db.client.query('SELECT * FROM users', (err, results) => {
+    db.query('SELECT * FROM users', (err, results) => {
       if (err) {
         console.log(err);
       } else {
@@ -80,7 +80,7 @@ module.exports = {
     let password;
 
     let promiseVerify = new Promise((resolve, reject) => {
-      db.client.query(
+      db.query(
         `SELECT password FROM users WHERE (name = '${req.body.name}');`,
         (err, results) => {
           console.log('username: ', req.body.name);

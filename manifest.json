@@ -1,13 +1,16 @@
 {
+    "key": "abkolnloefemkidcdnioffifgalejkmo",
     "name": "Note It",
     "version": "1.0",
     "description": "Be able to highlight items on a page and add notes.",
     "manifest_version": 2,
     "background": {
+
         "scripts": [
             "client/background.js"
         ],
         "persistent": false
+
     },
     "browser_action": {
         "default_popup": "client/popup.html"
@@ -18,20 +21,20 @@
         "128": "client/assets/highlightIcon.png"
     },
 
-    
-
     "permissions":[
         "storage",
         "<all_urls>",
         "identity",
         "contextMenus",
-        "activeTab"
+        "activeTab",
+        "webNavigation",
+        "tabs"
     ],
 
     "oauth2": {
-        "client_id": "616174675838-lhonhh213amr4hl1brlcq6ooa03h35lu.apps.googleusercontent.com",
+        "client_id": "616174675838-5h03nad2al6p1qo5vs9a8ti97vh49khn.apps.googleusercontent.com",
         "scopes": [
-            "https://www.googleapis.com/auth/plus.me"
+            "https://www.googleapis.com/auth/userinfo.email"
         ]
     }
 }
