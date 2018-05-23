@@ -11,6 +11,10 @@
 require('dotenv').config();
 const db = require('./../db');
 
+function IsNumeric(val) {
+  return Number(parseFloat(val)) === val;
+}
+
 module.exports = {
   getAllNotes(req, res) {
     db.query('SELECT * FROM notes;', (err, results) => {
@@ -39,39 +43,86 @@ module.exports = {
     );
   },
 
-  getNoteByID(req, res) {
-    const noteId = req.body.note_id;
-
-    db.query(`SELECT * FROM notes WHERE _id = ${noteId}`, (err, results) => {
+  getNoteByID(req, res, next) {
+    const noteID = Number(req.params.id);
+    if (isNaN(noteID)) {
+      next();
+      return;
+    }
+   
+    db.query(`SELECT * FROM notes WHERE id = ${noteID}`, (err, results) => {
       if (err) {
-        console.log('error:', err);
+        res.status(500);
+        res.send('Database error');
       } else {
-        res.sed(results);
+        const note = results.rows[0];
+        if (note) res.json(note);
+        else {
+          res.send(404);
+        }
+      }
+    });
+  },
+
+  getNotesForURL(req, res, next) {
+    const url = req.params.url;
+
+    db.query(`SELECT * FROM notes WHERE url = '${url}'`, (err, results) => {
+      if (err) {
+        console.log(`db err: ${err}`);
+        res.status(500);
+        res.send("Database error (did you forget to URL encode the URL you're requesting notes for?");
+      } else {
+        res.json(results.rows);
       }
     });
   },
 
   createNote(req, res) {
-    let { _id, title, url, html, css, user_id } = req.body;
-    let q = `INSERT INTO notes VALUES (${_id}, '${title}', '${url}', '${html}', '${css}', ${user_id})`;
+    const { url, text, startPath, stopPath, startIndex, stopIndex, isHighlighted} = req.body;
+
+    // TODO
+
+    console.log(`startPath: ${Array.isArray(startPath)}`);
+    console.log(`stopPath: ${stopPath}`);
+
+    let q = `INSERT INTO notes (url, text, start_path, stop_path, start_index, stop_index, is_highlighted) VALUES ('${url}', '${text}', '{"html","body:eq(3)","p"}', '{"html","body:eq(4)","p"}', '${startIndex}', '${stopIndex}', '${isHighlighted}') RETURNING *`;
+
     console.log(q);
     db.query(q, (err, results) => {
       if (err) {
-        console.log('error:', err);
-        res.end();
+        res.status(500);
+        res.send('Database error');
       } else {
-        res.send(results);
+        res.send(results.rows[0]);
+      }
+    });
+  },
+
+  deleteAllNotes(req, res) {
+    db.query(`DELETE FROM notes`, (err, results) => {
+      if (err) {
+        res.status(500);
+        res.send('Database error');
+      } else {
+        res.send('Success');
       }
     });
   },
 
   deleteNote(req, res) {
-    let noteID = req.body.note_id;
-    db.query(`DELETE FROM notes WHERE _id = ${noteID}`, (err, results) => {
+    let noteID = req.params.id;
+    if (!noteID) {
+      res.status(400);
+      res.send('Must specify a node ID!');
+    }
+
+    db.query(`DELETE FROM notes WHERE id = ${noteID}`, (err, results) => {
       if (err) {
-        console.log('error:', err);
+        res.status(500);
+        res.send('Database error');
       } else {
-        res.send(results);
+        res.send('Success');
       }
     });
   }

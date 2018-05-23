@@ -5,31 +5,14 @@ const SALT_WORK_FACTOR = 10;
 const bcrypt = require('bcryptjs');
 
 /*
-  _id         serial,
-  name        VARCHAR(32) PRIMARY KEY,
+  _id         serial PRIMARY KEY,
+  email       VARCHAR(255) NOT NULL,
   password    VARCHAR(255) NOT NULL,
   created     timestamptz,
   updated     timestamptz
 */
 
 module.exports = {
-  verifyUsername: (req, res, next) => {
-    if (req.body.name && req.body.password) {
-      db.query(
-        `SELECT password FROM users WHERE (name = '${req.body.name}');`,
-        (err, results) => {
-          console.log('checkUser log: ', results.rowCount);
-          if (results.rowCount > 0) {
-            return res.send('This username already exists.');
-          } else {
-            next();
-          }
-        }
-      );
-    } else {
-      return res.send("The username or password can't be empty");
-    }
-  },
 
   createUser: (req, res) => {
     let { name, password } = req.body;
@@ -112,5 +95,23 @@ module.exports = {
       .catch(err => {
         console.log('err promiseVerify: ', err);
       });
-  }
+  },
+  
+  verifyUsername: (req, res, next) => {
+    if (req.body.name && req.body.password) {
+      db.query(
+        `SELECT password FROM users WHERE (name = '${req.body.name}');`,
+        (err, results) => {
+          console.log('checkUser log: ', results.rowCount);
+          if (results.rowCount > 0) {
+            return res.send('This username already exists.');
+          } else {
+            next();
+          }
+        }
+      );
+    } else {
+      return res.send("The username or password can't be empty");
+    }
+  },
 };
