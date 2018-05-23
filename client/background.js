@@ -10,21 +10,53 @@ chrome.contextMenus.create(contextMenuItem);
 chrome.contextMenus.onClicked.addListener(function(clickData) {
   if(clickData.menuItemId == "highlight" && clickData.selectionText) {
     console.log("something is happening!!");
+    postHighlights();
   }
 })
 
+// let postHighlights = (async () => {
+//   const rawResponse = await fetch('/notes', {
+//     method: 'POST',
+//     headers: {
+//       'Accept': 'application/json',
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify({
+//       "url": "file:///Users/jessica/Desktop/untitled%20folder/test.html",
+//       "text": "This is a sample note",
+//       "startPath": ["html", "body:eq(3)", "p"],
+//       "stopPath": ["html", "body:eq(4)", "p"],
+//       "startIndex": 26,
+//       "stopIndex": 42,
+//       "isHighlighted": true
+//     })
+//   });
+//   const content = await rawResponse.json();
+//   console.log(content, "content");
+// }) ();
+
 function postHighlights() {
-  fetch(`/notes`, {
+  fetch('http://localhost:5535/notes', {
     method: 'POST',
     headers: {
       'content-type': 'application/json'
     },
-    body: JSON.stringify(),
+    body: JSON.stringify({
+      "url": "file:///Users/jessica/Desktop/untitled%20folder/test.html",
+      "text": "This is a sample note",
+      "startPath": ["html", "body:eq(3)", "p"],
+      "stopPath": ["html", "body:eq(4)", "p"],
+      "startIndex": 26,
+      "stopIndex": 42,
+      "isHighlighted": true
+  }),
   })
   .then(function(response) {
     return response.json();
   })
-  .then()
+  .then(function(somehting) {
+    console.log(something, "is happening");
+  })
 }
 
 let currentURL;
