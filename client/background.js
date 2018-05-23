@@ -5,12 +5,27 @@ let contextMenuItem = {
     "contexts": ["selection"]
 };
 
+chrome.contextMenus.create(contextMenuItem);
 
+chrome.contextMenus.onClicked.addListener(function(clickData) {
+  if(clickData.menuItemId == "highlight" && clickData.selectionText) {
+    console.log("something is happening!!");
+  }
+})
 
-chrome.contextMenus.create(contextMenuItem, function highlightStuff(info) {
-    var searchstring = info.selectionText;
-    console.log(searchstring, "this is the search string");
-});
+function postHighlights() {
+  fetch(`/notes`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify(),
+  })
+  .then(function(response) {
+    return response.json();
+  })
+  .then()
+}
 
 let currentURL;
 
