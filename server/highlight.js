@@ -1,20 +1,19 @@
+if (!window.Highlight) {
+  Highlight = {};
+}
+Highlight.Selector = {};
+Highlight.Selector.getSelected = function() {
+  var t = '';
+  if (window.getSelection) {
+    t = window.getSelection();
+  } else if (document.getSelection) {
+    t = document.getSelection();
+  } else if (document.selection) {
+    t = document.selection.createRange().text;
+  }
+  return t;
+};
 
-if(!window.Highlight){
-    Highlight = {};
-  }
-  Highlight.Selector = {};
-  Highlight.Selector.getSelected = function(){
-    var t = '';
-    if(window.getSelection){
-      t = window.getSelection();
-    }else if(document.getSelection){
-      t = document.getSelection();
-    }else if(document.selection){
-      t = document.selection.createRange().text;
-    }
-    return t;
-  }
-  
 //   Highlight.Selector.mouseup = function(){
 //     var st = Highlight.Selector.getSelected();
 //     if(st!=''){
@@ -22,99 +21,110 @@ if(!window.Highlight){
 //     }
 //   }
 
-
-  Highlight.Selector.mouseup = function(){
-    let selected = Highlight.Selector.getSelected();
-      if (selected!=''){
-         let stack = [];
-         while (selected.parentNode != null){
-             let sibCount = 0;
-             let sibIndex = 0;
-             for (let i = 0; i < selected.parentNode.childNodes.length; i++){
-                 let sib = selected.parentNode.childNodes[i];
-                 if (sib.nodeName == selected.nodeName){
-                     if (sib === path){
-                         sibIndex = sibCount;
-                     }
-                     sibCount++;
-                 }
-             }
-             if ( path.hasAttribute('id') && selected.id != '' ) {
-                    stack.unshift(selected.nodeName.toLowerCase() + '#' + el.id);
-                    } else if ( sibCount > 1 ) {
-                     stack.unshift(selected.nodeName.toLowerCase() + ':eq(' + sibIndex + ')');
-                    } else {
-                    stack.unshift(selected.nodeName.toLowerCase());
-                    }
-                selected = selected.parentNode;
-         } 
-         const highlightObj = {
-            anchorData: selected.anchorNode.data,
-            anchorOffset: selected.anchorOffset,
-            focusData: selected.focusNode.data,
-            focusOffset: selected.focusOffset,
-            anchorElement: selected.anchorNode,
-            focusElement: selected.focusNode,
-         }
-          function getDomPath(el) {
-            var stack = [];
-            while ( el.parentNode != null ) {
-              var sibCount = 0;
-              var sibIndex = 0;
-              for ( var i = 0; i < el.parentNode.childNodes.length; i++ ) {
-                var sib = el.parentNode.childNodes[i];
-                if ( sib.nodeName == el.nodeName ) {
-                  if ( sib === el ) {
-                    sibIndex = sibCount;
-                  }
-                  sibCount++;
-                }
-              }
-              // if ( el.hasAttribute('id') && el.id != '' ) {
-              //   stack.unshift(el.nodeName.toLowerCase() + '#' + el.id);
-              if ( sibCount > 1 ) {
-                stack.unshift(el.nodeName.toLowerCase() + ':eq(' + sibIndex + ')');
-              } else {
-                stack.unshift(el.nodeName.toLowerCase());
-              }
-              el = el.parentNode;
-            }
-             stack.splice(-1, 1);
-
-             const filteredArray = stack.filter(element => element[0] !== '#');
-            chrome.runtime.sendMessage({ type: 'highlighted-text-path', data: filteredArray });
-             return filteredArray; 
-           }
-        
-        const noteObj = {
-            anchorPath: getDomPath(highlightObj.anchorElement),
-            focusPath: getDomPath(highlightObj.focusElement),
-            anchorOffset: highlightObj.anchorOffset,
-            focusOffset: highlightObj.focusOffset,
+Highlight.Selector.mouseup = function() {
+  let selected = Highlight.Selector.getSelected();
+  if (selected != '') {
+    let stack = [];
+    while (selected.parentNode != null) {
+      let sibCount = 0;
+      let sibIndex = 0;
+      for (let i = 0; i < selected.parentNode.childNodes.length; i++) {
+        let sib = selected.parentNode.childNodes[i];
+        if (sib.nodeName == selected.nodeName) {
+          if (sib === path) {
+            sibIndex = sibCount;
+          }
+          sibCount++;
         }
+      }
+      if (path.hasAttribute('id') && selected.id != '') {
+        stack.unshift(selected.nodeName.toLowerCase() + '#' + el.id);
+      } else if (sibCount > 1) {
+        stack.unshift(
+          selected.nodeName.toLowerCase() + ':eq(' + sibIndex + ')'
+        );
+      } else {
+        stack.unshift(selected.nodeName.toLowerCase());
+      }
+      selected = selected.parentNode;
+    }
+    const highlightObj = {
+      anchorData: selected.anchorNode.data,
+      anchorOffset: selected.anchorOffset,
+      focusData: selected.focusNode.data,
+      focusOffset: selected.focusOffset,
+      anchorElement: selected.anchorNode,
+      focusElement: selected.focusNode
+    };
+    function getDomPath(el) {
+      var stack = [];
+
+      // while the current element has a parent…
+      while (el.parentNode != null) {
+        var sibCount = 0;
+        var sibIndex = 0;
+
+        // iterate through all of the parent's child nodes…
+        for (var i = 0; i < el.parentNode.childNodes.length; i++) {
+          // get the current sibling
+          var sib = el.parentNode.childNodes[i];
+
+          console.log('sib:' + JSON.stringify(sib));
+          if (sib.nodeName == el.nodeName) {
+            if (sib === el) {
+              sibIndex = sibCount;
+            }
+            sibCount++;
+          }
+        }
+        // if ( el.hasAttribute('id') && el.id != '' ) {
+        //   stack.unshift(el.nodeName.toLowerCase() + '#' + el.id);
+        if (sibCount > 1) {
+          stack.unshift(
+            el.nodeName.toLowerCase() + ':eq(' + (sibIndex + 1) + ')'
+          );
+        } else {
+          stack.unshift(el.nodeName.toLowerCase());
+        }
+        el = el.parentNode;
+      }
+      stack.splice(-1, 1);
+
+      const filteredArray = stack.filter(element => element[0] !== '#');
+      chrome.runtime.sendMessage({
+        type: 'highlighted-text-path',
+        data: filteredArray
+      });
+      return filteredArray;
+    }
+
+    const noteObj = {
+      anchorPath: getDomPath(highlightObj.anchorElement),
+      focusPath: getDomPath(highlightObj.focusElement),
+      anchorOffset: highlightObj.anchorOffset,
+      focusOffset: highlightObj.focusOffset
+    };
 
     const finalObj = JSON.parse(JSON.stringify(noteObj));
-    let position = selected.anchorNode.compareDocumentPosition(selected.focusNode);
-  
+    let position = selected.anchorNode.compareDocumentPosition(
+      selected.focusNode
+    );
+
     if (position & Node.DOCUMENT_POSITION_PRECEDING) {
-
-        let tempFocus = finalObj.focusPath;
-        let tempFocusOffset = finalObj.focusOffset;
-            finalObj.focusPath = finalObj.anchorPath;
-            finalObj.anchorPath = tempFocus;
-            finalObj.focusOffset = finalObj.anchorOffset;
-            finalObj.anchorOffset = tempFocusOffset;
-        }
-
-
-        console.log(`finalObj: ${JSON.stringify(finalObj)}`);
-
-        return finalObj;
+      let tempFocus = finalObj.focusPath;
+      let tempFocusOffset = finalObj.focusOffset;
+      finalObj.focusPath = finalObj.anchorPath;
+      finalObj.anchorPath = tempFocus;
+      finalObj.focusOffset = finalObj.anchorOffset;
+      finalObj.anchorOffset = tempFocusOffset;
     }
-     
-  }
 
-  $(document).ready(function(){
-    $(document).bind("mouseup", Highlight.Selector.mouseup);
-  });
-  
+    console.log(`finalObj: ${JSON.stringify(finalObj)}`);
+
+    return finalObj;
+  }
+};
+
+$(document).ready(function() {
+  $(document).bind('mouseup', Highlight.Selector.mouseup);
+});
