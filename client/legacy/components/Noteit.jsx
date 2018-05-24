@@ -6,7 +6,6 @@ import React from "react";
 // request('http://www.google.com/', function(err, resp, html) {
 //         if (!err){
 //           const $ = cheerio.load(html);
-//           console.log(html); 
 //       }
 // });
 
@@ -41,7 +40,6 @@ class Noteit extends React.Component {
 
   handleHighlight(selected) {
     const test = document.getSelection(); // document.getElementById("testing");
-    console.log(test.archorNode.parentElement);
     document.getElementById('testing').style.backgroundColor = "yellow";
   }
 

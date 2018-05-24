@@ -10,9 +10,13 @@ module.exports = {
 
     let promise = new Promise((resolve, reject) => {
       bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-        if (err) return console.log('Salt gen: ', err);
+        if (err) {
+          res.send(500);
+          return;
+        }
+
         bcrypt.hash(password, salt, function(err, hash) {
-          if (err) return console.log('Hash gen: ', err);
+          if (err) res.send(500);
           else {
             password = hash;
             resolve();
@@ -23,28 +27,22 @@ module.exports = {
 
     promise
       .then(() => {
-        console.log('hashed password: ', password);
         let q = `INSERT INTO users(name, password) VALUES ('${name}', '${password}');`;
-        console.log('Our query is read: ', q);
 
         db.query(q, (err, results) => {
-          console.log('query');
-          if (err) console.log(err);
+          if (err) res.send(500);
           else return res.send(true);
         });
       })
       .catch(err => {
-        console.log('err promise: ', err);
+        res.send(500);
       });
   },
 
   checkUser: (req, res) => {
     db.query('SELECT * FROM users', (err, results) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(results.rows);
-      }
+      if (err) res.send(500);
+      else res.send(results.rows);
     });
   },
 
@@ -56,14 +54,11 @@ module.exports = {
       db.query(
         `SELECT password FROM users WHERE (name = '${req.body.name}');`,
         (err, results) => {
-          console.log('username: ', req.body.name);
           if (err) reject();
           if (results.rows[0] === undefined) {
-            console.log('result: ', results);
             return res.send(false);
           } else {
             password = results.rows[0].password;
-            console.log('password: ', password);
             resolve();
           }
         }
@@ -74,7 +69,7 @@ module.exports = {
       .then(() => {
         bcrypt.compare(candidatePassword, password, function(err, isMatch) {
           if (err) {
-            console.log('compare error: ', err);
+            res.send(500);
           } else if (isMatch) {
             return res.send(true);
           } else if (!isMatch) {
@@ -83,7 +78,7 @@ module.exports = {
         });
       })
       .catch(err => {
-        console.log('err promiseVerify: ', err);
+        res.send(500);
       });
   },
   
@@ -92,7 +87,6 @@ module.exports = {
       db.query(
         `SELECT password FROM users WHERE (name = '${req.body.name}');`,
         (err, results) => {
-          console.log('checkUser log: ', results.rowCount);
           if (results.rowCount > 0) {
             return res.send('This username already exists.');
           } else {
