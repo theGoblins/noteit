@@ -70,7 +70,6 @@ Highlight.Selector.mouseup = function() {
         var prevSibling = el.previousSibling;
 
         while (prevSibling) {
-          // console.log('compare "' + el.nodeName + '" to "' + prevSibling.nodeName + '"…');
           if (el.nodeName === prevSibling.nodeName) siblingIndex++;
           prevSibling = prevSibling.previousSibling;
         }
@@ -85,8 +84,6 @@ Highlight.Selector.mouseup = function() {
 
         el = el.parentNode;
       }
-
-      console.log('final stack: ' + stack);
 
       chrome.runtime.sendMessage({
         type: 'highlighted-text-path',
