@@ -1,23 +1,28 @@
 chrome.runtime.onMessage.addListener(msg => {
   // If the received message has the expected format...
-  if (msg.type === 'notes_to_highlight') {
+  if (msg.type === 'highlighted-notes') {
     // Call the specified callback, passing
     // the web-page's DOM content as argument
     highlightNotes(msg.data);
   }
 });
 
-function highlightNotes(DBobjs) {
-  let elementString = DBobjs.join(' > ');
+function highlightNotes(arr) {
+  let noteObj = arr[0];
+  let startElement = noteObj.start_path.join(' > ');
+  let startIndex = noteObj.start_index;
+  let stopIndex = noteObj.stop_index;
+  let stopElement = noteObj.stop_path.join(' > ');
 
-  let start = 3,
-    length = 140;
-  // once the selector arrays are properly constructed, use this:
+  // TODO:
   // elements.forEach((e, i) => {
   //   startIndex = i === 1?
   //   element = $('html body p:eq(2)');
   //   element.markRanges([{start: 5, length: 100000}]);
-  $(elementString).text('HELLLO!!!!!');
 
-  // .markRanges([{start: 0, length: 40}]);
+  // $(startElement).html($(startElement).html() + ', Hello world!');
+
+  $(startElement).markRanges([
+    { start: startIndex, length: stopIndex - startIndex }
+  ]);
 }

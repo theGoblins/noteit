@@ -94,13 +94,14 @@ let currentURL;
 
 chrome.runtime.onMessage.addListener(msg => {
   // If the received message has the expected format...
-  if (msg.type === 'highlighted-text-path') {
+  if (msg.type === 'highlighted-notes') {
+    console.log('got message:');
+    console.log(JSON.stringify(msg.data));
     // Call the specified callback, passing
     // the web-page's DOM content as argument
-    console.log('msg.data: ' + msg.data);
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
       chrome.tabs.sendMessage(tabs[0].id, {
-        type: 'notes_to_highlight',
+        type: 'highlighted-notes',
         data: msg.data
       });
     });
@@ -117,7 +118,7 @@ function getNotesForURL() {
     .then(resp => {
       chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
         chrome.tabs.sendMessage(tabs[0].id, {
-          type: 'notes_to_highlight',
+          type: 'highlighted-notes',
           data: resp
         });
       });
