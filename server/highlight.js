@@ -59,43 +59,41 @@ Highlight.Selector.mouseup = function() {
     function getDomPath(el) {
       var stack = [];
 
+      // TODO: if element has an ID, reference it directly…
+      // if ( el.hasAttribute('id') && el.id != '' ) {
+      //   stack.unshift(el.nodeName.toLowerCase() + '#' + el.id);
+      // }
+
       // while the current element has a parent…
       while (el.parentNode != null) {
-        var sibCount = 0;
-        var sibIndex = 0;
+        var siblingIndex = 0;
+        var prevSibling = el.previousSibling;
 
-        // iterate through all of the parent's child nodes…
-        for (var i = 0; i < el.parentNode.childNodes.length; i++) {
-          // get the current sibling
-          var sib = el.parentNode.childNodes[i];
-
-          console.log('sib:' + JSON.stringify(sib));
-          if (sib.nodeName == el.nodeName) {
-            if (sib === el) {
-              sibIndex = sibCount;
-            }
-            sibCount++;
-          }
+        while (prevSibling) {
+          // console.log('compare "' + el.nodeName + '" to "' + prevSibling.nodeName + '"…');
+          if (el.nodeName === prevSibling.nodeName) siblingIndex++;
+          prevSibling = prevSibling.previousSibling;
         }
-        // if ( el.hasAttribute('id') && el.id != '' ) {
-        //   stack.unshift(el.nodeName.toLowerCase() + '#' + el.id);
-        if (sibCount > 1) {
+
+        // exclude elements starting with '#' (i.e. '#text')
+        if (el.nodeName[0] !== '#') {
           stack.unshift(
-            el.nodeName.toLowerCase() + ':eq(' + (sibIndex + 1) + ')'
+            el.nodeName.toLowerCase() +
+              (siblingIndex > 0 ? ':eq(' + siblingIndex + ')' : '')
           );
-        } else {
-          stack.unshift(el.nodeName.toLowerCase());
         }
+
         el = el.parentNode;
       }
-      stack.splice(-1, 1);
 
-      const filteredArray = stack.filter(element => element[0] !== '#');
+      console.log('final stack: ' + stack);
+
       chrome.runtime.sendMessage({
         type: 'highlighted-text-path',
-        data: filteredArray
+        data: stack
       });
-      return filteredArray;
+
+      return stack;
     }
 
     const noteObj = {
