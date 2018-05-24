@@ -9,8 +9,16 @@ chrome.contextMenus.create(contextMenuItem);
 
 chrome.contextMenus.onClicked.addListener(function(clickData) {
   if(clickData.menuItemId == "highlight" && clickData.selectionText) {
-    console.log("something is happening!!");
-    postHighlights();
+    // chrome.runtime.onMessage.addListener((msg) => {
+    //   if (msg.type === 'sent-obj') {
+    //     console.log("finalObj message recieved!");
+    //     postHighlights(msg.data);
+    //   }
+    // })
+    
+    
+    // console.log("something is happening!!");
+    // postHighlights();
   }
 })
 
@@ -35,27 +43,24 @@ chrome.contextMenus.onClicked.addListener(function(clickData) {
 //   console.log(content, "content");
 // }) ();
 
-function postHighlights() {
+function postHighlights(data) {
   fetch('http://localhost:5535/notes', {
     method: 'POST',
     headers: {
       'content-type': 'application/json'
     },
     body: JSON.stringify({
-      "url": "file:///Users/jessica/Desktop/untitled%20folder/test.html",
-      "text": "This is a sample note",
-      "startPath": ["html", "body:eq(3)", "p"],
-      "stopPath": ["html", "body:eq(4)", "p"],
-      "startIndex": 26,
-      "stopIndex": 42,
+      "url": "wiki.com",
+      "text": "selection text",
+      "startPath": data.anchorPath,
+      "stopPath": data.focusPath,
+      "startIndex": data.anchorOffset,
+      "stopIndex": data.focusOffset,
       "isHighlighted": true
   }),
   })
   .then(function(response) {
     return response.json();
-  })
-  .then(function(somehting) {
-    console.log(something, "is happening");
   })
 }
 
@@ -82,6 +87,9 @@ chrome.runtime.onMessage.addListener((msg) => {
       chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, { type: 'notes_to_highlight', data: msg.data });
       });
+  }
+  if (msg.type === 'sent-obj') {
+    postHighlights(msg.data);
   }
 });
 
