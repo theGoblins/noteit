@@ -69,6 +69,23 @@ Highlight.Selector.mouseup = function() {
         var siblingIndex = 0;
         var prevSibling = el.previousSibling;
 
+ 
+    const finalObj = JSON.parse(JSON.stringify(noteObj));
+    let position = selected.anchorNode.compareDocumentPosition(selected.focusNode);
+        // send message to background.js
+        
+        if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+          
+          let tempFocus = finalObj.focusPath;
+          let tempFocusOffset = finalObj.focusOffset;
+          finalObj.focusPath = finalObj.anchorPath;
+          finalObj.anchorPath = tempFocus;
+          finalObj.focusOffset = finalObj.anchorOffset;
+          finalObj.anchorOffset = tempFocusOffset;
+        }
+        
+        chrome.runtime.sendMessage({ type: 'sent-obj', data: finalObj });
+
         while (prevSibling) {
           if (el.nodeName === prevSibling.nodeName) siblingIndex++;
           prevSibling = prevSibling.previousSibling;

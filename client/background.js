@@ -7,8 +7,19 @@ let contextMenuItem = {
 chrome.contextMenus.create(contextMenuItem);
 
 chrome.contextMenus.onClicked.addListener(function(clickData) {
-  if (clickData.menuItemId == 'highlight' && clickData.selectionText) {
-    postHighlights();
+
+  if(clickData.menuItemId == "highlight" && clickData.selectionText) {
+    // chrome.runtime.onMessage.addListener((msg) => {
+    //   if (msg.type === 'sent-obj') {
+    //     console.log("finalObj message recieved!");
+    //     postHighlights(msg.data);
+    //   }
+    // })
+    
+    
+    // console.log("something is happening!!");
+    // postHighlights();
+
   }
 });
 
@@ -32,13 +43,27 @@ chrome.contextMenus.onClicked.addListener(function(clickData) {
 //   const content = await rawResponse.json();
 // }) ();
 
-function postHighlights() {
+function postHighlights(data) {
   fetch('http://localhost:5535/notes', {
     method: 'POST',
     headers: {
       'content-type': 'application/json'
     },
     body: JSON.stringify({
+
+      "url": "wiki.com",
+      "text": "selection text",
+      "startPath": data.anchorPath,
+      "stopPath": data.focusPath,
+      "startIndex": data.anchorOffset,
+      "stopIndex": data.focusOffset,
+      "isHighlighted": true
+  }),
+  })
+  .then(function(response) {
+    return response.json();
+  })
+
       url: 'file:///Users/jessica/Desktop/untitled%20folder/test.html',
       text: 'This is a sample note',
       startPath: ['html', 'body:eq(3)', 'p'],
@@ -52,6 +77,7 @@ function postHighlights() {
       return response.json();
     })
     .then(function(somehting) {});
+
 }
 
 let currentURL;
@@ -78,6 +104,9 @@ chrome.runtime.onMessage.addListener(msg => {
         data: msg.data
       });
     });
+  }
+  if (msg.type === 'sent-obj') {
+    postHighlights(msg.data);
   }
 });
 
