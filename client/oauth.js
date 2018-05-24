@@ -76,7 +76,6 @@ window.onload = function() {
     gapi.client.plus.people.get({
       'userId': 'me',
     }).then(function(resp) {
-      console.log(resp);
       const p = document.createElement('p');
       const name = resp.result.name.givenName;
       const email = resp.result.emails[0].value;

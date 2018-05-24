@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom';
 
 const Sign = props => {
 
-  // console.log('props: ', props);
   let submit = props.verifyUser;
   let text = 'Log in:';
   if (props.label === "sign") {
