@@ -15,7 +15,7 @@
     "content_scripts": [
       {
         "matches": ["*://*/*"],
-        "js": ["client/assets/jquery-3.3.1.min.js", "client/assets/jquery.mark.es6.js", "server/highlight.js", "client/content.js"]
+        "js": ["client/assets/jquery-3.3.1.min.js", "client/assets/jquery.mark.es6.js", "client/popup.js", "server/highlight.js", "client/content.js"]
       }
     ],
     "browser_action": {

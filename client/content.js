@@ -4,7 +4,7 @@ chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === 'notes_to_highlight') {
       // Call the specified callback, passing
       // the web-page's DOM content as argument
-      highlightNotes(msg.data)
+      // highlightNotes(msg.data)
   }
 });
 

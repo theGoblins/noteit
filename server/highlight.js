@@ -88,7 +88,7 @@ if(!window.Highlight){
 
              const filteredArray = stack.filter(element => element[0] !== '#');
              console.log(filteredArray);
-            chrome.runtime.sendMessage({ type: 'highlighted-text-path', data: filteredArray });
+              chrome.runtime.sendMessage({ type: 'highlighted-text-path', data: filteredArray });
              return filteredArray; 
            }
         

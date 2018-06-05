@@ -4,6 +4,16 @@
     padding: 10px 20px;
 }
 
+#notes {
+  display: flex;
+  flex-direction: column;
+}
+
+#notes div {
+  height: auto;
+  width: 100%;
+}
+
 #header {
   height: 50px;
   background-color: lightskyblue;
