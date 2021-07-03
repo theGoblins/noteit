@@ -1,14 +1,13 @@
 import React from "react";
 
-var request = require('request');
-var cheerio = require('cheerio');
+// var request = require('request');
+// var cheerio = require('cheerio');
 
-request('http://www.google.com/', function(err, resp, html) {
-        if (!err){
-          const $ = cheerio.load(html);
-          console.log(html); 
-      }
-});
+// request('http://www.google.com/', function(err, resp, html) {
+//         if (!err){
+//           const $ = cheerio.load(html);
+//       }
+// });
 
 // function TestSelection () {
 //   if (window.getSelection) {  // all browsers, except IE before version 9
@@ -41,7 +40,6 @@ class Noteit extends React.Component {
 
   handleHighlight(selected) {
     const test = document.getSelection(); // document.getElementById("testing");
-    console.log(test.archorNode.parentElement);
     document.getElementById('testing').style.backgroundColor = "yellow";
   }
 

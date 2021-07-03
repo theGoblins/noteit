@@ -1,0 +1,28 @@
+#data {
+    width: 300px;
+    height: 440px;
+    padding: 10px 20px;
+}
+
+#notes {
+  display: flex;
+  flex-direction: column;
+}
+
+#notes div {
+  height: auto;
+  width: 100%;
+}
+
+#header {
+  height: 50px;
+  background-color: lightskyblue;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#user-display {
+  font-size: 16px;
+  display: none;
+}

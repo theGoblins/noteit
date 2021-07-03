@@ -2,11 +2,11 @@
   "name": "noteit",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "server/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack -p --watch",
-    "start": "nodemon server/server.js"
+    "start": "nodemon server/app.js"
   },
   "author": "",
   "license": "ISC",
@@ -18,8 +18,8 @@
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "immutable": "^3.8.2",
+    "jquery": "^3.3.1",
     "node-sass": "^4.9.0",
-    "nodemon": "^1.8.1",
     "pg": "^7.4.3",
     "pg-promise": "^8.4.4",
     "react": "^16.3.2",
@@ -39,6 +39,14 @@
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-airbnb-standard": "^1.6.6",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.8.2",
+    "mark.js": "^8.11.1",
+    "nodemon": "^1.17.4",
     "webpack-cli": "^2.1.3"
   }
 }
